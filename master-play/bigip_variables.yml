@@ -1,0 +1,25 @@
+---
+# BIG-IP
+bigip_ip: "172.21.208.143"
+ 
+vip_name: app1_http8020
+vip_port: 8020
+vip_ip: 69.5.2.120
+pool_name: web_pool_8020
+pool_port: 8020
+ 
+# APIC
+tenant_name: "devwks1195"
+consumer_bd_name: "web"
+provider_bd_name: "web"
+ 
+app_profile_name: "app"
+consumer_epg_name: "client"
+provider_epg_name: "web"
+ 
+sg_template_name: "u10-lab4-sg8020"
+contract_name: "u10-cntr-8020"
+contract_subject_name: "u10-subj-8020"
+filter_name: "u10-fltr-8020"
+ 
+logicalDeviceCluster_name: "BIG-IP"

@@ -1,0 +1,11 @@
+<vnsLDevCtx nodeNameOrLbl="N1" name="" graphNameOrLbl="u10-lab4-sg8010" dn="uni/tn-devwks1195/ldevCtx-c-u10-cntr-8010-g-u10-lab4-sg8010-n-N1" ctrctNameOrLbl="u10-cntr-8010">
+   <vnsRsLDevCtxToLDev tDn="uni/tn-devwks1195/lDevVip-BIG-IP" />
+   <vnsLIfCtx permitLog="no" connNameOrLbl="provider">
+      <vnsRsLIfCtxToBD tDn="uni/tn-devwks1195/BD-web" />
+      <vnsRsLIfCtxToLIf tDn="uni/tn-devwks1195/lDevVip-BIG-IP/lIf-Internal" />
+   </vnsLIfCtx>
+   <vnsLIfCtx permitLog="no" connNameOrLbl="consumer">
+      <vnsRsLIfCtxToBD tDn="uni/tn-devwks1195/BD-web" />
+      <vnsRsLIfCtxToLIf tDn="uni/tn-devwks1195/lDevVip-BIG-IP/lIf-External" />
+   </vnsLIfCtx>
+</vnsLDevCtx>

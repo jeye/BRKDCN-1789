@@ -1,0 +1,12 @@
+---
+- name: Create contract
+  import_playbook: play1.yml
+
+- name: Deploy service graph
+  import_playbook: play2.yml
+
+- name: Creating virtual servers and pool
+  import_playbook: play3.yml
+
+- name: Dynamic attach
+  import_playbook: play4.yml

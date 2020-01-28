@@ -1,0 +1,121 @@
+---
+- name: Configuring contract 
+  hosts: apic
+  connection: local
+  gather_facts: no
+  vars:
+    use_ssl: yes
+    validate_certs: false
+  vars_files:
+    - "aci_variables.yml"  # Including a variables file
+
+  tasks:
+    - name: Create contract
+      aci_contract:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        use_ssl: "{{ use_ssl }}"
+        validate_certs: "{{ validate_certs }}"
+        #
+        tenant: "{{ item.tenant_name }}"
+        contract: "{{ item.contract_name }}"
+        description: client to web contract for port XX
+        scope: application-profile
+        state: present
+      with_items: "{{ enforce }}"
+
+    - name: Create contract subject
+      aci_contract_subject:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        use_ssl: "{{ use_ssl }}"
+        validate_certs: "{{ validate_certs }}"
+        #
+        tenant: "{{ item.tenant_name }}"
+        contract: "{{ item.contract_name }}"
+        subject: "{{ item.contract_subject_name }}"  # Name of the subject
+        reverse_filter: "{{ item.reverse_filter }}"  # Reverse filter enabled or not
+        dscp: unspecified
+        state: present
+      with_items: "{{ enforce }}"
+
+    - name: Create contract filter
+      aci_filter:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        use_ssl: "{{ use_ssl }}"
+        validate_certs: "{{ validate_certs }}"
+        #
+        tenant: "{{ item.tenant_name }}"
+        filter: "{{ item.filter_name }}"  # Name of the filter
+        state: present
+      with_items: "{{ enforce }}"
+
+    - name: Create contract filter
+      aci_filter_entry:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        use_ssl: "{{ use_ssl }}"
+        validate_certs: "{{ validate_certs }}"
+        #
+        tenant: "{{ item.tenant_name }}" 
+        filter: "{{ item.filter_name }}"
+        entry: "{{ item.entry_name }}"  # Name of the filter entry.
+        ether_type: "{{ item.ether_type }}"  # Ethernet type, ip, arp, etc.
+        ip_protocol: "{{ item.ip_protocol }}"  # IP Protocol type when ether_type is ip, e.g. tcp, udp, etc.
+        dst_port_start: "{{ item.dst_port_start }}"  # Starting L4 port number.
+        dst_port_end: "{{ item.dst_port_end }}"  # Ending L4 port number.
+        state: present
+      with_items: "{{ enforce }}"
+
+    - name: Bind the filter to the contract subject
+      aci_contract_subject_to_filter:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        use_ssl: "{{ use_ssl }}"
+        validate_certs: "{{ validate_certs }}"
+        #
+        tenant: "{{ item.tenant_name }}"
+        contract: "{{ item.contract_name }}"
+        subject: "{{ item.contract_subject_name }}"
+        filter: "{{ item.filter_name }}"
+        state: present
+      with_items: "{{ enforce }}"
+
+    - name: Bind the contract to the provider EPG 
+      aci_epg_to_contract:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        use_ssl: "{{ use_ssl }}"
+        validate_certs: "{{ validate_certs }}"
+        #
+        tenant: "{{ item.tenant_name }}"
+        ap: "{{ item.app_profile_name }}"
+        epg: "{{ item.provider_epg_name }}"  # Provider EPG name
+        contract: "{{ item.contract_name }}"
+        contract_type: provider
+        state: present
+      with_items: "{{ enforce }}"
+
+    - name: Bind the contract to the consumer EPG 
+      aci_epg_to_contract:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        use_ssl: "{{ use_ssl }}"
+        validate_certs: "{{ validate_certs }}"
+        #
+        tenant: "{{ item.tenant_name }}"
+        ap: "{{ item.app_profile_name }}"
+        epg: "{{ item.consumer_epg_name }}"
+        contract: "{{ item.contract_name }}"  # Consumer EPG name
+        contract_type: consumer
+        state: present
+      with_items: "{{ enforce }}"
+

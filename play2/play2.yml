@@ -1,0 +1,36 @@
+---
+- name: Configure ACI
+  hosts: apic
+  connection: local
+  gather_facts: no
+  vars:
+    use_ssl: yes
+    validate_certs: false
+  vars_files:
+    - "bigip_variables.yml"  # Including a variables file
+      
+  tasks:
+  - name: Create XML POSTS from templates
+    template: src={{ item.src }} dest={{ item.dest }}
+    with_items:
+      - { src: 'service_graph_template.j2',    dest: 'service_graph_template.xml'}
+      - { src: 'device_selection_policy.j2',   dest: 'device_selection_policy.xml'}
+      - { src: 'apply_graph.j2',               dest: 'apply_graph.xml'}
+      - { src: 'attach_cons_prov_contract.j2', dest: 'attach_cons_prov_contract.xml'}
+
+  - name: Execute POSTS
+    aci_rest:
+      hostname: "{{ inventory_hostname }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      use_ssl: "{{ use_ssl }}"
+      validate_certs: "{{ validate_certs }}"
+      #
+      action: "post"
+      uri: "/api/node/mo/uni/tn-{{ tenant_name }}.xml"
+      config_file: "{{ item }}"
+    with_items:
+     - "service_graph_template.xml"
+     - "device_selection_policy.xml"
+     - "apply_graph.xml"
+     - "attach_cons_prov_contract.xml"

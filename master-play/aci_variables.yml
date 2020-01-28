@@ -1,0 +1,15 @@
+---
+enforce:
+  - tenant_name: "devwks1195"
+    contract_name:  "u10-cntr-8020"
+    contract_subject_name: "u10-subj-8020"
+    reverse_filter: yes
+    filter_name: "u10-fltr-8020"
+    entry_name: "port8020"
+    ether_type: "ip"
+    ip_protocol: "tcp"
+    dst_port_start: "8020"
+    dst_port_end: "8020"
+    app_profile_name: "app"
+    consumer_epg_name: "client"
+    provider_epg_name: "web"
